@@ -37,6 +37,7 @@ app.use("/admin", adminRoutes);
 app.use("/brands",brandRoutes);
 app.use("/courses",courseRoutes);
 app.use("/public/leads",publicLeadRoutes);
+console.log("✅ Public lead routes loaded");
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not Found" });

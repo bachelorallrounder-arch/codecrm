@@ -4,6 +4,13 @@ import { verifyWebsiteApiKey } from "../middleware/verifyWebsiteApiKey.js";
 
 const router = express.Router();
 
+router.get("/test", (req, res) => {
+  res.json({
+    success: true,
+    message: "Public lead route working"
+  });
+});
+
 router.post("/website", verifyWebsiteApiKey, createWebsiteLead);
 
 export default router;
