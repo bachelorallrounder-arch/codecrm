@@ -1,0 +1,6 @@
+"timestamp","action","entity","entityId","userId","userName","details","meta"
+"2025-12-05T07:03:27.324Z","add_attempt","Attempt","693283bf1f4cdc0d336dd3ce","69215a02e25bbc229794ce14","Rakesh","{""leadId"":""6931c6730d67831c266fb953"",""result"":""connected"",""remark"":"""",""attemptNumber"":1}",""
+"2025-12-05T07:16:10.387Z","add_attempt","Attempt","693286ba1f24fdbb9c99943d","69215a02e25bbc229794ce14","Rakesh","{""leadId"":""6931c6730d67831c266fb952"",""result"":""interested"",""remark"":"""",""attemptNumber"":1}",""
+"2025-12-05T09:58:16.081Z","add_attempt","Attempt","6932acb8d27d02549a6cd155","69215a02e25bbc229794ce14","Rakesh","{""leadId"":""6931c6730d67831c266fb952"",""result"":""fee_enquiry"",""remark"":"""",""attemptNumber"":2}",""
+"2025-12-05T10:29:08.498Z","add_attempt","Attempt","6932b3f448485ee1a3b2ed97","69215a02e25bbc229794ce14","Rakesh","{""leadId"":""6931c6730d67831c266fb951"",""result"":""interested"",""remark"":"""",""attemptNumber"":1}",""
+"2025-12-05T10:32:07.115Z","add_attempt","Attempt","6932b4a748485ee1a3b2edbf","69215a02e25bbc229794ce14","Rakesh","{""leadId"":""6931c6730d67831c266fb952"",""result"":""fee_enquiry"",""remark"":""Nothing"",""attemptNumber"":3}",""

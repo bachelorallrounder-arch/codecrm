@@ -1,0 +1,2 @@
+lead_id,created_at,updated_at,month,name,email,phone,source,course,brand,createdBy,assigned_to,notes,status,next_follow_up,result,remark,attempts_count,convertedBy,meta_json
+"6a54ba6a6e7f8ea83f991127","2026-07-13T10:14:02.307Z","2026-07-13T10:14:02.311Z","2026-07","Uday","uday@gmail.com","8794561233","website","","6a54b8496e7f8ea83f991035","6a54b45bddaf850b0cf95fe4","6a54b4aef87f8adbf0f29814","","new","2026-07-14T10:11:00.000Z","","","0","","{}"
