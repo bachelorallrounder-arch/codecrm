@@ -16,7 +16,7 @@ const leadSchema = new Schema({
   intent_level: { type: String, enum: ["low","medium","high"], default: "low" },
   is_hot: { type: Boolean, default: false },
   attempts_count: { type: Number, default: 0 },
-  createdBy:{type:mongoose.Schema.Types.ObjectId,ref:"User",required:true},
+  createdBy:{type:mongoose.Schema.Types.ObjectId,ref:"User"},
   createdAt: { type: Date, default: Date.now },
   updatedBy:{type:mongoose.Schema.Types.ObjectId,ref:"User",index:true},
   convertedBy:{type:mongoose.Schema.Types.ObjectId,ref:"User"},
