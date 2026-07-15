@@ -132,6 +132,22 @@ export default function CounsellorLeads() {
           : [];
         setBrands(assigned);
       }
+      try {
+      const res = await AdminAPI.getCourses({ limit: 1000 });
+
+      const payload = res?.data ?? res ?? [];
+
+      const arr =
+        payload?.results ||
+        payload?.courses ||
+        payload?.data ||
+        (Array.isArray(payload) ? payload : []);
+
+      setCourses(Array.isArray(arr) ? arr : []);
+    } catch (err) {
+      console.error("Failed loading courses", err);
+      setCourses([]);
+    }
 
       if (isAdmin) {
         try {
@@ -1116,13 +1132,28 @@ export default function CounsellorLeads() {
                   </select>
 
                   <label className="cl-label">Course interest</label>
-                  <input
+
+                  <select
                     value={form.course_interest}
                     onChange={(e) =>
-                      setForm((s) => ({ ...s, course_interest: e.target.value }))
+                      setForm((s) => ({
+                        ...s,
+                        course_interest: e.target.value,
+                      }))
                     }
                     className="cl-input"
-                  />
+                  >
+                    <option value="">Select Course</option>
+
+                    {courses.map((course) => (
+                      <option
+                        key={course._id}
+                        value={course._id}
+                      >
+                        {course.name}
+                      </option>
+                    ))}
+                  </select>
 
                   <label className="cl-label">Notes</label>
                   <textarea
