@@ -122,13 +122,13 @@ export default function CounsellorLeads() {
         // fallback: use assigned brands from user
         const assigned = Array.isArray(user?.assignedBrands)
           ? user.assignedBrands.map((b) =>
-              typeof b === "string"
-                ? { _id: b, name: `Brand ${b}` }
-                : {
-                    _id: b._id || b.id || b,
-                    name: b.name || `Brand ${b._id || b.id || ""}`,
-                  }
-            )
+            typeof b === "string"
+              ? { _id: b, name: `Brand ${b}` }
+              : {
+                _id: b._id || b.id || b,
+                name: b.name || `Brand ${b._id || b.id || ""}`,
+              }
+          )
           : [];
         setBrands(assigned);
       }
@@ -187,16 +187,16 @@ export default function CounsellorLeads() {
         setLeads(Array.isArray(arr) ? arr : []);
         setTotal(
           payload?.total ??
-            payload?.count ??
-            (Array.isArray(arr) ? arr.length : 0)
+          payload?.count ??
+          (Array.isArray(arr) ? arr.length : 0)
         );
       }
     } catch (err) {
       console.error("Leads load failed:", err);
       setError(
         err?.response?.data?.message ||
-          err.message ||
-          "Could not load leads"
+        err.message ||
+        "Could not load leads"
       );
     } finally {
       setLoading(false);
@@ -312,7 +312,7 @@ export default function CounsellorLeads() {
         baseLead.brand ||
         "",
       source: baseLead.source || baseLead.Source || "",
-      course_interest: baseLead.course_interest || baseLead.course || "",
+      course_interest: baseLead.course_interest?._id || baseLead.course || "",
       notes: baseLead.notes || "",
       next_follow_up: baseLead.next_follow_up
         ? dayjs(baseLead.next_follow_up).format("YYYY-MM-DDTHH:mm")
@@ -383,12 +383,12 @@ export default function CounsellorLeads() {
           mergedLead.brand ||
           "",
         source: mergedLead.source || mergedLead.Source || "",
-        course_interest: mergedLead.course_interest || mergedLead.course || "",
+        course_interest: mergedLead.course_interest?._id || mergedLead.course_interest || "",
         notes: mergedLead.notes || "",
         next_follow_up: mergedLead.next_follow_up
           ? dayjs(mergedLead.next_follow_up).format(
-              "YYYY-MM-DDTHH:mm"
-            )
+            "YYYY-MM-DDTHH:mm"
+          )
           : "",
         assigned_to:
           (mergedLead.assigned_to &&
@@ -491,8 +491,8 @@ export default function CounsellorLeads() {
     } catch (err) {
       alert(
         err?.response?.data?.message ||
-          err.message ||
-          "Save failed"
+        err.message ||
+        "Save failed"
       );
     } finally {
       setBusy(false);
@@ -507,7 +507,7 @@ export default function CounsellorLeads() {
     } catch (err) {
       alert(
         "Delete failed: " +
-          (err?.response?.data?.message || err.message)
+        (err?.response?.data?.message || err.message)
       );
     }
   }
@@ -521,7 +521,7 @@ export default function CounsellorLeads() {
     } catch (err) {
       alert(
         "Add attempt failed: " +
-          (err?.response?.data?.message || err.message)
+        (err?.response?.data?.message || err.message)
       );
     }
   }
@@ -534,7 +534,7 @@ export default function CounsellorLeads() {
     } catch (err) {
       alert(
         "Add remark failed: " +
-          (err?.response?.data?.message || err.message)
+        (err?.response?.data?.message || err.message)
       );
     }
   }
@@ -549,7 +549,7 @@ export default function CounsellorLeads() {
     } catch (err) {
       alert(
         "Book demo failed: " +
-          (err?.response?.data?.message || err.message)
+        (err?.response?.data?.message || err.message)
       );
     }
   }
@@ -562,7 +562,7 @@ export default function CounsellorLeads() {
     } catch (err) {
       alert(
         "Convert failed: " +
-          (err?.response?.data?.message || err.message)
+        (err?.response?.data?.message || err.message)
       );
     }
   }
@@ -589,7 +589,7 @@ export default function CounsellorLeads() {
     } catch (err) {
       alert(
         "Assign failed: " +
-          (err?.response?.data?.message || err.message)
+        (err?.response?.data?.message || err.message)
       );
     }
   }
@@ -858,8 +858,8 @@ export default function CounsellorLeads() {
                   {leads.map((l) => {
                     const nf = l.next_follow_up
                       ? dayjs(l.next_follow_up).format(
-                          "YYYY-MM-DDTHH:mm"
-                        )
+                        "YYYY-MM-DDTHH:mm"
+                      )
                       : null;
                     const brandName =
                       (l.brand && (l.brand.name || l.brand)) ||
@@ -899,15 +899,14 @@ export default function CounsellorLeads() {
                               <div className="cl-status-area">
                                 {String(l.status).toLowerCase() !==
                                   "converted" && (
-                                  <StatusBadge status={l.status} />
-                                )}
+                                    <StatusBadge status={l.status} />
+                                  )}
                                 {alreadyConverted && <ConvertedPill />}
                               </div>
                             </div>
                           </div>
                           <div className="cl-course-source">
-                            {l.course_interest || "—"} •
-                            {"  "}Source: {l.source || "—"}
+                            {l.course_interest?.name || l.course_interest || "—"} • Source: {l.source || "—"}
                           </div>
                         </div>
 
@@ -1203,8 +1202,8 @@ export default function CounsellorLeads() {
                       {busy
                         ? "Saving..."
                         : editing
-                        ? "Update"
-                        : "Create"}
+                          ? "Update"
+                          : "Create"}
                     </button>
                   </div>
                 </div>
@@ -1245,9 +1244,9 @@ export default function CounsellorLeads() {
                             <div className="cl-muted small">Remaining</div>
                             <div style={{ fontWeight: 700 }}>
                               {editingConversion.total_fee != null &&
-                              editingConversion.amount_paid != null
+                                editingConversion.amount_paid != null
                                 ? Number(editingConversion.total_fee) -
-                                  Number(editingConversion.amount_paid)
+                                Number(editingConversion.amount_paid)
                                 : "—"}
                             </div>
                           </div>
@@ -1263,9 +1262,9 @@ export default function CounsellorLeads() {
                               {editingConversion.createdAt
                                 ? dayjs(editingConversion.createdAt).format("DD MMM, YYYY")
                                 : editingConversion.paid_on
-                                ? dayjs(editingConversion.paid_on).format("DD MMM, YYYY")
-                                : "—"}
-                                {editingConversion.lead?.convertedBy?.name
+                                  ? dayjs(editingConversion.paid_on).format("DD MMM, YYYY")
+                                  : "—"}
+                              {editingConversion.lead?.convertedBy?.name
                                 || editingConversion.convertedBy?.name
                                 || editingConversion.convertedBy
                                 || "-"}
@@ -1313,12 +1312,12 @@ export default function CounsellorLeads() {
                               {a.createdAt
                                 ? dayjs(a.createdAt).format("DD MMM, YYYY • HH:mm")
                                 : a.date
-                                ? dayjs(a.date).format("DD MMM, YYYY • HH:mm")
-                                : ""}
+                                  ? dayjs(a.date).format("DD MMM, YYYY • HH:mm")
+                                  : ""}
                               {" "}
                               <h4>Made By:{" "}
                                 {displayUserName(
-                                  a.createdBy ||""
+                                  a.createdBy || ""
                                 )}
                               </h4>
                             </div>

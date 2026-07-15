@@ -49,7 +49,7 @@ export default function Sidebar() {
               <path d="M6 15l4-8 4 8h-8z" fill="#fff" />
             </svg>
           </div>
-          {!collapsed && <div className="brand-title">CodeZen</div>}
+          {!collapsed && <div className="brand-title">EduCrm</div>}
         </div>
 
         <button

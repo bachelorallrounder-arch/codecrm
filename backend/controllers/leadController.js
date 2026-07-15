@@ -83,11 +83,12 @@ export const listLeads = async (req, res) => {
 
   const total = await Lead.countDocuments(query);
   const leads = await Lead.find(query)
-    .populate("brand")
-    .populate("assigned_to", "name email")
-    .sort(sort)
-    .skip((page-1)*limit)
-    .limit(Number(limit));
+  .populate("brand", "name")
+  .populate("course_interest", "name")
+  .populate("assigned_to", "name email")
+  .sort(sort)
+  .skip((page - 1) * limit)
+  .limit(Number(limit));
 
   res.json({ total, page: Number(page), limit: Number(limit), results: leads });
 };
@@ -96,11 +97,12 @@ export const getLead = async (req, res) => {
   const id = req.params.id;
   if (!mongoose.isValidObjectId(id)) return res.status(400).json({ message: "Invalid id" });
   const lead = await Lead.findById(id)
-    .populate("brand")
-    .populate("assigned_to", "name email")
-    .populate("createdBy","name email")
-    .populate("updatedBy","name email")
-    .populate("convertedBy","name email");
+  .populate("brand", "name")
+  .populate("course_interest", "name")
+  .populate("assigned_to", "name email")
+  .populate("createdBy", "name email")
+  .populate("updatedBy", "name email")
+  .populate("convertedBy", "name email");
   if (!lead) return res.status(404).json({ message: "Not found" });
 
   // If counsellor, ensure assigned
