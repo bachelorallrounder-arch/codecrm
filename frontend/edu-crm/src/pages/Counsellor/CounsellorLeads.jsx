@@ -40,6 +40,7 @@ export default function CounsellorLeads() {
   const [counsellors, setCounsellors] = useState([]);
   const [loading, setLoading] = useState(false);
   const [metaLoading, setMetaLoading] = useState(false);
+  const [courses, setCourses] = useState([]);
   const [error, setError] = useState("");
 
   const [q, setQ] = useState("");
