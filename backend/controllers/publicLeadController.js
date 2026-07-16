@@ -4,6 +4,8 @@ import Brand from "../models/Brand.js";
 import Course from "../models/Course.js";
 import User from "../models/User.js";
 import AuditLog from "../models/AuditLog.js";
+import { upsertLeadToMonthlyCsv } from "../backup/localBackup.js";
+import { enqueueFileUpload } from "../backup/driveUploader.js";
 export const createWebsiteLead = async (req, res) => {
   try {
     console.log("========== WEBSITE LEAD ==========");
@@ -102,6 +104,14 @@ export const createWebsiteLead = async (req, res) => {
       Language : ${language || "-"}
       Page :${pageUrl || "-"}${remarks || ""}`,
     });
+    const populatedLead = await Lead.findById(lead._id)
+  .populate("brand", "name")
+  .populate("course_interest", "name")
+  .populate("assigned_to", "name")
+  .lean();
+
+const csvPath = upsertLeadToMonthlyCsv(populatedLead);
+enqueueFileUpload(csvPath);
     await AuditLog.create({
       user: null,
       action: "website_lead",

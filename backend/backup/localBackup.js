@@ -47,7 +47,7 @@ function leadToCsvRow(lead) {
     qVal(lead.email || ""),
     qVal(lead.phone || lead.phone_primary || ""),
     qVal(lead.source || ""),
-    qVal(lead.course_interest || lead.course || ""),
+    qVal(getName(lead.course_interest) || lead.course || ""),
     qVal(getName(lead.brand) || ""),
     qVal(getName(lead.createdBy)),
     qVal(getName(lead.assigned_to)),

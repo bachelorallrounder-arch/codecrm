@@ -29,8 +29,6 @@ leadSchema.pre("save", function(next){
   next();
 });
 
-const Lead = mongoose.models.Lead || mongoose.model("Lead", leadSchema);
-export default Lead;
 leadSchema.post("save", async function(doc) {
   try {
     const backup = await import("../../backup/localBackup.js");
@@ -117,3 +115,5 @@ leadSchema.post("remove", async function(doc) {
     } catch (e) { console.error("[Lead.post.remove] audit failed", e); }
   } catch (err) { console.error("[Lead.post.remove] middleware error", err); }
 });
+const Lead = mongoose.models.Lead || mongoose.model("Lead", leadSchema);
+export default Lead;
