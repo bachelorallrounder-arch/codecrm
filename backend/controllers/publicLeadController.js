@@ -4,12 +4,10 @@ import Brand from "../models/Brand.js";
 import Course from "../models/Course.js";
 import User from "../models/User.js";
 import AuditLog from "../models/AuditLog.js";
-
 export const createWebsiteLead = async (req, res) => {
   try {
     console.log("========== WEBSITE LEAD ==========");
     console.log(req.body);
-
     const {
       name,
       phone,
@@ -23,38 +21,33 @@ export const createWebsiteLead = async (req, res) => {
       source,
       remarks,
     } = req.body;
-
     const phoneNumber = mobile || phone;
     const pageUrl = page || source_page;
-
     if (!name || !phoneNumber) {
       return res.status(400).json({
         success: false,
         message: "Name and Mobile are required",
       });
     }
-    const duplicate = await Lead.findOne({
-      $or: [
-        { phone_primary: phoneNumber },
-        ...(email ? [{ email }] : []),
-      ],
-    });
-
-    if (duplicate) {
-      return res.json({
-        success: true,
-        duplicate: true,
-        leadId: duplicate._id,
-        message: "Lead already exists",
-      });
-    }
+    // const duplicate = await Lead.findOne({
+    //   $or: [
+    //     { phone_primary: phoneNumber },
+    //     ...(email ? [{ email }] : []),
+    //   ],
+    // });
+    // if (duplicate) {
+    //   return res.json({
+    //     success: true,
+    //     duplicate: true,
+    //     leadId: duplicate._id,
+    //     message: "Lead already exists",
+    //   });
+    // }
     let brandDoc = null;
-
     if (brand) {
       brandDoc = await Brand.findOne({
         name: new RegExp(`^${brand}$`, "i"),
       });
-
       if (!brandDoc) {
         brandDoc = await Brand.create({
           name: brand.trim(),
@@ -63,7 +56,6 @@ export const createWebsiteLead = async (req, res) => {
     } else {
       brandDoc = await Brand.findOne();
     }
-
     if (!brandDoc) {
       return res.status(400).json({
         success: false,
@@ -71,12 +63,10 @@ export const createWebsiteLead = async (req, res) => {
       });
     }
     let courseDoc = null;
-
     if (course) {
       courseDoc = await Course.findOne({
         name: new RegExp(`^${course}$`, "i"),
       });
-
       if (!courseDoc) {
         courseDoc = await Course.create({
           name: course.trim(),
@@ -101,35 +91,16 @@ export const createWebsiteLead = async (req, res) => {
     }
     const lead = await Lead.create({
       name,
-
       phone_primary: phoneNumber,
-
       email,
-
       brand: brandDoc._id,
-
       course_interest: courseDoc?._id,
-
       source: source || "Website",
-
       assigned_to: counsellor?._id,
-
-      createdBy: new mongoose.Types.ObjectId(
-        process.env.WEBSITE_CREATED_BY
-      ),
-
       status: "new",
-
-      notes: `
-Website Lead
-
-Language : ${language || "-"}
-
-Page :
-${pageUrl || "-"}
-
-${remarks || ""}
-`,
+      notes: `Website Lead
+      Language : ${language || "-"}
+      Page :${pageUrl || "-"}${remarks || ""}`,
     });
     await AuditLog.create({
       user: null,
@@ -138,7 +109,6 @@ ${remarks || ""}
       entityId: lead._id,
       details: req.body,
     });
-
     return res.status(201).json({
       success: true,
       leadId: lead._id,
@@ -146,7 +116,6 @@ ${remarks || ""}
     });
   } catch (err) {
     console.error("createWebsiteLead:", err);
-
     return res.status(500).json({
       success: false,
       message: err.message,

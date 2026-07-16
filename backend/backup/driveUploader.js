@@ -22,8 +22,26 @@ if (!DRIVE_FOLDER_ID) {
 /* Read credentials/token if available */
 let credentials = null;
 let token = null;
-try { credentials = JSON.parse(fs.readFileSync(CRED_PATH, "utf8")); } catch (e) { log("no credentials at", CRED_PATH); }
-try { token = JSON.parse(fs.readFileSync(TOKEN_PATH, "utf8")); } catch (e) { log("no token at", TOKEN_PATH); }
+
+try {
+  if (process.env.GOOGLE_OAUTH_CREDENTIALS_JSON) {
+    credentials = JSON.parse(process.env.GOOGLE_OAUTH_CREDENTIALS_JSON);
+  } else {
+    credentials = JSON.parse(fs.readFileSync(CRED_PATH, "utf8"));
+  }
+} catch (e) {
+  console.error("Unable to load credentials", e.message);
+}
+
+try {
+  if (process.env.GOOGLE_OAUTH_TOKEN_JSON) {
+    token = JSON.parse(process.env.GOOGLE_OAUTH_TOKEN_JSON);
+  } else {
+    token = JSON.parse(fs.readFileSync(TOKEN_PATH, "utf8"));
+  }
+} catch (e) {
+  console.error("Unable to load token", e.message);
+}
 
 /* Initialize Drive client if possible */
 let driveClient = null;
