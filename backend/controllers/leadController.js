@@ -167,10 +167,26 @@ export const deleteLead = async (req, res) => {
   const id = req.params.id;
    const lead = await Lead.findByIdAndDelete(id);
     if (!lead) return res.status(404).json({ message: "not found" });
-    // remove from CSV
-    const deleted = deleteLeadFromMonthlyCsv(id);
-    // also create an audit log if you have one
-    res.json({ message: "deleted", csvDeleted: deleted });
+  const month = lead.createdAt.toISOString().slice(0, 7);
+
+const deleted = deleteLeadFromMonthlyCsv(
+  id,
+  month,
+  req.user?.name || req.user?.email || ""
+);
+
+await AuditLog.create({
+  user: req.user._id,
+  action: "delete_lead",
+  entity: "Lead",
+  entityId: id,
+  details: lead,
+});
+
+res.json({
+  message: "deleted",
+  csvDeleted: deleted,
+});
   } catch (err) {
     console.error("deleteLead error:", err);
     res.status(500).json({ message: "internal error" });
