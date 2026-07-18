@@ -39,9 +39,19 @@ export const createLead = async (req, res) => {
   lead.intent_level = detectIntent(body.notes || body.source || "");
   lead.priority_score = calcPriority({ sourceScore: 1, courseDemand: 1, attemptSuccess: 0, isHot: false, freshnessScore: 2, demoBooked: false });
 
-  const saved = await lead.save()
-  const csvPath = upsertLeadToMonthlyCsv(saved);
-  enqueueFileUpload(csvPath);
+ const saved = await lead.save();
+
+const populatedLead = await Lead.findById(saved._id)
+  .populate("brand", "name")
+  .populate("course_interest", "name")
+  .populate("assigned_to", "name")
+  .populate("createdBy", "name")
+  .populate("updatedBy", "name")
+  .populate("convertedBy", "name")
+  .lean();
+
+const csvPath = upsertLeadToMonthlyCsv(populatedLead);
+enqueueFileUpload(csvPath);
   await AuditLog.create({ user: req.user._id, action: "create_lead", entity: "Lead", entityId: saved._id, details: saved });
 
   res.status(201).json(saved);
