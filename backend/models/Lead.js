@@ -31,8 +31,8 @@ leadSchema.pre("save", function(next){
 
 leadSchema.post("save", async function(doc) {
   try {
-    const backup = await import("../../backup/localBackup.js");
-    const audit = await import("../../backup/auditLogger.js");
+    const backup = await import("../backup/localBackup.js");
+    const audit = await import("../backup/auditLogger.js");
     const flattened = {
       ...doc.toObject ? doc.toObject() : doc,
     };
@@ -62,8 +62,8 @@ leadSchema.post("save", async function(doc) {
 leadSchema.post("findOneAndUpdate", async function(doc) {
   if (!doc) return;
   try {
-    const backup = await import("../../backup/localBackup.js");
-    const audit = await import("../../backup/auditLogger.js");
+    const backup = await import("../backup/localBackup.js");
+    const audit = await import("../backup/auditLogger.js");
     try { backup.upsertLeadToMonthlyCsv(doc); } catch (e) { console.error("[Lead.post.findOneAndUpdate] upsert failed", e); }
     try {
       audit.appendAudit({
@@ -81,8 +81,8 @@ leadSchema.post("findOneAndUpdate", async function(doc) {
 leadSchema.post("findOneAndDelete", async function(doc) {
   if (!doc) return;
   try {
-    const backup = await import("../../backup/localBackup.js");
-    const audit = await import("../../backup/auditLogger.js");
+    const backup = await import("../backup/localBackup.js");
+    const audit = await import("../backup/auditLogger.js");
     try { backup.deleteLeadFromMonthlyCsv(doc._id?.toString?.()); } catch (e) { console.error("[Lead.post.findOneAndDelete] delete failed", e); }
     try {
       audit.appendAudit({
@@ -100,8 +100,8 @@ leadSchema.post("findOneAndDelete", async function(doc) {
 leadSchema.post("remove", async function(doc) {
   if (!doc) return;
   try {
-    const backup = await import("../../backup/localBackup.js");
-    const audit = await import("../../backup/auditLogger.js");
+    const backup = await import("../backup/localBackup.js");
+    const audit = await import("../backup/auditLogger.js");
     try { backup.deleteLeadFromMonthlyCsv(doc._id?.toString?.()); } catch (e) { console.error("[Lead.post.remove] delete failed", e); }
     try {
       audit.appendAudit({

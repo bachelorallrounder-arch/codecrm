@@ -67,16 +67,43 @@ function saveCache() { try { fs.writeFileSync(CACHE_PATH, JSON.stringify(fileIdC
 /* Helpers */
 async function findFileId(filename) {
   if (!driveClient) throw new Error("Drive client not initialized");
+
   const key = `${DRIVE_FOLDER_ID}/${filename}`;
-  if (fileIdCache[key]) return fileIdCache[key];
-  const q = `'${DRIVE_FOLDER_ID}' in parents and name = '${filename.replace(/'/g,"\\'")}' and trashed = false`;
-  const res = await driveClient.files.list({ q, fields: "files(id, name)", spaces: "drive", pageSize: 10 });
+
+  // Verify cached file still exists
+  if (fileIdCache[key]) {
+    try {
+      await driveClient.files.get({
+        fileId: fileIdCache[key],
+        fields: "id",
+      });
+
+      return fileIdCache[key];
+    } catch (err) {
+      log("Cached file no longer exists. Removing cache.");
+
+      delete fileIdCache[key];
+      saveCache();
+    }
+  }
+
+  const q = `'${DRIVE_FOLDER_ID}' in parents and name='${filename.replace(/'/g, "\\'")}' and trashed=false`;
+
+  const res = await driveClient.files.list({
+    q,
+    fields: "files(id,name)",
+    spaces: "drive",
+    pageSize: 1,
+  });
+
   const files = res.data.files || [];
-  if (files.length > 0) {
+
+  if (files.length) {
     fileIdCache[key] = files[0].id;
     saveCache();
     return files[0].id;
   }
+
   return null;
 }
 
@@ -89,22 +116,56 @@ export async function uploadOrUpdateFile(localPath, filename, mimeType = "text/c
   const fileId = await findFileId(filename);
   const media = { mimeType, body: fs.createReadStream(abs) };
   if (fileId) {
+  try {
+
     log("updating file", filename, "fileId:", fileId);
-    await driveClient.files.update({ fileId, media });
-    return fileId;
-  } else {
-    log("creating file", filename);
-    const res = await driveClient.files.create({
-      requestBody: { name: filename, parents: [DRIVE_FOLDER_ID] },
+
+    await driveClient.files.update({
+      fileId,
       media,
-      fields: "id"
     });
-    const newId = res.data.id;
-    fileIdCache[`${DRIVE_FOLDER_ID}/${filename}`] = newId;
-    saveCache();
-    log("created fileId", newId);
-    return newId;
+
+    return fileId;
+
+  } catch (err) {
+
+    // Cached file deleted from Drive
+    if (err.code === 404 || err.status === 404) {
+
+      log("Drive file missing. Recreating...");
+
+      delete fileIdCache[`${DRIVE_FOLDER_ID}/${filename}`];
+      saveCache();
+
+    } else {
+
+      throw err;
+
+    }
   }
+}
+
+// Create brand new file
+log("creating file", filename);
+
+const res = await driveClient.files.create({
+  requestBody: {
+    name: filename,
+    parents: [DRIVE_FOLDER_ID],
+  },
+  media,
+  fields: "id",
+});
+
+const newId = res.data.id;
+
+fileIdCache[`${DRIVE_FOLDER_ID}/${filename}`] = newId;
+
+saveCache();
+
+log("created fileId", newId);
+
+return newId;
 }
 
 /* Immediate upload */

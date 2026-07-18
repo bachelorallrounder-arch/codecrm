@@ -148,9 +148,12 @@ export const updateLead = async (req, res) => {
 
   const saved = await lead.save();
   const refreshedLead = await Lead.findById(id)
-  .populate('createdBy', 'name')
-  .populate('assigned_to', 'name')
-  .populate('convertedBy', 'name')
+  .populate("brand", "name")
+  .populate("course_interest", "name")
+  .populate("assigned_to", "name")
+  .populate("createdBy", "name")
+  .populate("updatedBy", "name")
+  .populate("convertedBy", "name")
   .lean();
 
   const csvPath = upsertLeadToMonthlyCsv(refreshedLead);
